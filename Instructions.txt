@@ -1,0 +1,9 @@
+Do the steps
+
+Step 1: mkdir tweetme2 	// creating the folder
+Step 2: virtualenv env	// create virtual env
+Step 3: django-admin startproject tweetme2 . 	// this . will help to create the folder at there without creating the new one
+Step 4: python manage.py shell 	// this command will help to do task in the database
+             for ex how we do in that shell 
+              from tweets.models import Tweet
+              Tweet.objects.create(content="Here we creating")	

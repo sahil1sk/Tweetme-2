@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block head_title %} 
+   This is amazing!!! 
+{% endblock %}
+
+{% block content %}
+<div class='row text-center'>
+    <div class="col">
+        <h1>Welcome to Tweetme 2</h1>
+    </div>
+</div>
+    
+<div class="row mb-3">
+    <div class="col-md-4 mx-auto col-10">
+        <form id="tweet-create-form" class="form" method="POST" action="/create-tweet">
+            {% csrf_token %}
+            <div class="d-none alert alert-danger" id="tweet-create-form-error"></div> 
+            <input type="hidden" value="/" name="next"/>        <!--so here we send the url also to redirect to the next page-->
+            <!-- so required means this is essential-->
+            <textarea required="required" class="form-control" name="content" placeholder="Your tweet..." ></textarea>
+            <button type="submit" class="btn btn-primary">Tweet</button>                
+        </form>
+    </div>
+</div>
+
+<div class="row" id="tweets">
+    Loading...
+</div>
+
+<script>
+
+    // this fucntion we used to show the error
+    function handleTweetFormError(msg, display){
+        var myErrorDiv = document.getElementById('tweet-create-form-error');
+        if (display){   // show error
+            myErrorDiv.setAttribute("class", "d-block alert alert-danger") // here we setting the attribute of the div d-block means show in the form of block
+            myErrorDiv.innerText = msg
+            
+        }else{  // hide error
+            myErrorDiv.setAttribute("class", "d-none alert alert-danger")  // here we setting the attribute but d-none means that don't show div
+            
+        }
+    }
+
+    // so this function is triggered when the form is submitted
+    function handleTweetCreateFormDidSubmit(event){
+        event.preventDefault()
+        const myForm = event.target
+        const myFormData = new FormData(myForm)     // here we convert the data into form data so that we directly send the data for submition
+        //for (var myItem of myFormData.entries()) { // this type of for loop is specilly used for the form data
+          //  console.log(myItem);
+        //}
+        const url = myForm.getAttribute("action")   // here we get the action value using getAttribute
+        const method = myForm.getAttribute("method") // here we get the method
+        const xhr = new XMLHttpRequest()             // here we use xhr to send the data internally   
+        const responseType = "json"
+        xhr.responseType = responseType     // this we make that we will getting the json response
+        xhr.open(method, url)
+        xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest") // here we setting the headers as we set in fetch method 
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")      // we set this header so that the django will know this is the ajax request
+        xhr.onload = function() {
+            const serverResponse = xhr.response // so here we get the response
+            if(xhr.status === 201){             // xhr.status will come from response
+                handleTweetFormError("", false); // so here we call form error function but passing false there is no error
+                const newTweet = xhr.response
+                const newTweetJson = newTweet // JSON.parse(newTweet) use if you don't use xhr.response type is json we have to convert into json beacuse we don't use there response type json as we do in loadtweet function
+                //console.log(newTweetJson.likes);
+                const newTweetElement = formatTweetElement(newTweetJson); // so here we send the data in formatTweetElement function so that it will shown 
+                const ogHtml = tweetContainerElement.innerHTML  // so here we will get all the innerdata in ogHtml and then
+                tweetContainerElement.innerHTML = newTweetElement + ogHtml // here we add the new element and og element data in the container
+                myForm.reset()      // this will help to reset the form so that everything will gone from that place
+            }else if (xhr.status === 400){  // if the status code is 400 this means there is an error made by user like giving wrong input
+                const errorJson = xhr.response  // so here in the respone we will get what error made by the user
+                const contentError = errorJson.content;  // so we take errorJson.content because there will be error in our content must be you will also be able to use errorJson.image to show image error if you use image
+                let contentErrorMsg;
+                if (contentError) {
+                    contentErrorMsg = contentError[0] // here we get the first element of that dict
+                    if (contentErrorMsg){
+                        handleTweetFormError(contentErrorMsg, true);
+                    }
+                    else{
+                        alert("An error occured. Please try again.");    
+                    }
+                }else{
+                    alert("An error occured. Please try again.");
+                }
+            }
+            else if(xhr.status === 401){   // so here we use 401 as you must logged in it is alway not means that this is authentication status
+                alert("You must be logged in");
+                window.location.href = '/login'                 // this will help to  send to the login page
+            }
+            else if(xhr.status === 500){   // status 500 means there was any server error
+                alert("There was a server error, please try again")                
+            }
+
+        }// if there is any big error than onerror function will take place big error like no internet
+        xhr.onerror = function() {
+            alert("An error occurred. Please try again later." );
+        }
+        xhr.send(myFormData)    // here we sending the form data
+    
+    }
+
+    // here we get the form by it's id
+    const tweetCreateFormEl = document.getElementById('tweet-create-form');
+    tweetCreateFormEl.addEventListener('submit', handleTweetCreateFormDidSubmit)
+
+    const tweetContainerElement = document.getElementById("tweets");    // so here we go the div by it's id as we know
+
+    // this fucntion we used for loading the tweets
+    function loadTweets(tweetsElement) {
+        // the given line of code upto 36 line use to fetch the datas
+        const xhr = new XMLHttpRequest() // we declare the variable of that class
+        const method = 'GET' 
+        const url = '/tweets'
+        const responseType = "json"
+
+        
+        xhr.responseType = responseType // here we will tell to the xhr responseType you get back data of json type
+        xhr.open(method, url)
+        xhr.onload = function() {
+            const serverResponse = xhr.response         // here we got the response
+            const listedItems =  serverResponse //serverResponse.response we use when we call from the tweet_detail_view_pure_django function  // so we have response in our dict that contains the items so that was why we use serverResponse.response 
+            var finalTweetStr = ""
+            var i;
+            for(i=0; i<listedItems.length; i++){
+                var tweetObj = listedItems[i]       // here we get the each object
+                var currentItem = formatTweetElement(tweetObj)  // and then we send it to the function for formatting and getting the string back
+                finalTweetStr +=currentItem     // then we add in the string
+            }
+            tweetsElement.innerHTML = finalTweetStr         // here we add the full string 
+        }
+        xhr.send()
+    }
+
+    // here we calling the function for loading the tweets
+    loadTweets(tweetContainerElement);
+
+    // this function we make for handling the likes
+    function handleDidLike (tweet_id, currentCount){
+        console.log(tweet_id, currentCount);
+    }
+
+    // this function is used to create the like button
+    function LikeBtn(tweet){
+        return "<button class='btn btn-primary' onclick='handleDidLike(" + tweet.id + "," + tweet.likes + ")'> "+ tweet.likes +" Like</button>" // onclick of this button this will calling the function that will handle the like and unlike
+    }
+
+    // this function we make for the formating of the data what we get
+    function formatTweetElement(tweet) {       
+        // we give the class name and unique id to each div id='"tweet.id"'                                   
+        var formattedTweet = "<div class='col-12 col-md-10 mx-auto border rounded py-3 mb-4' id='tweet-"+ tweet.id +"'><p>" 
+        + tweet.content + "</p> <div class='btn-group'>" + LikeBtn(tweet) + "</div></div>"  // we are calling like btn function which help to make the btn for each and also we passing the same tweet for further function
+        return formattedTweet    
+    }
+
+  
+
+
+</script>
+
+{% endblock content %}
