@@ -29,6 +29,22 @@
 </div>
 
 <script>
+    //  this function is used to create the tooken
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
     // this fucntion we used to show the error
     function handleTweetFormError(msg, display){
@@ -90,6 +106,10 @@
                 alert("You must be logged in");
                 window.location.href = '/login'                 // this will help to  send to the login page
             }
+            else if(xhr.status === 403){   // so here we use 403 as you must logged in it is alway not means that this is authentication status
+                alert("You must be logged in");
+                window.location.href = '/login'                 // this will help to  send to the login page
+            }
             else if(xhr.status === 500){   // status 500 means there was any server error
                 alert("There was a server error, please try again")                
             }
@@ -137,21 +157,54 @@
     // here we calling the function for loading the tweets
     loadTweets(tweetContainerElement);
 
-    // this function we make for handling the likes
-    function handleDidLike (tweet_id, currentCount){
-        console.log(tweet_id, currentCount);
+    // this fun we make for handling the actions
+    function handleTweetActionBtn(tweet_id, currentCount, action) {
+        const url = "/api/tweets/action"
+        const method="POST"
+        const data = JSON.stringify({       // here we stringify the data
+            id: tweet_id,                  //  Remember when we send data in the form of json then on the other side we have                   
+            action: action                 //  to recieve the data using request.data instead of request.POST
+        })
+        const xhr = new XMLHttpRequest()
+        var csrftoken = getCookie('csrftoken');    // calling the function and getting the token
+        xhr.open(method, url)
+        xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")     // setting ajax in header
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")       // setting ajax in header
+        xhr.setRequestHeader("X-CSRFToken", csrftoken)                            //  setting csrf token in header  
+        xhr.onload = function()  {
+            loadTweets(tweetContainerElement);                          // here we calling the function for load all the tweets again                        
+            console.log("here is the status",xhr.status, xhr.response)
+        }
+        xhr.send(data)
+        return 
     }
 
     // this function is used to create the like button
-    function LikeBtn(tweet){
-        return "<button class='btn btn-primary' onclick='handleDidLike(" + tweet.id + "," + tweet.likes + ")'> "+ tweet.likes +" Like</button>" // onclick of this button this will calling the function that will handle the like and unlike
+    function LikeBtn(tweet){            
+        return "<button class='btn btn-primary btn-sm' onclick=handleTweetActionBtn(" + 
+        tweet.id + "," + tweet.likes + ",'like')>" + tweet.likes + " Likes</button>" // onclick of this button this will calling the function that will handle the like and unlike
     }
+
+    // here we making retweet button
+    function RetweetBtn(tweet){            
+        return "<button class='btn btn-outline-success btn-sm' onclick=handleTweetActionBtn(" + 
+        tweet.id + "," + tweet.likes + ",'retweet')> Retweet</button>" // onclick of this button this will calling the function that will handle the like and unlike
+    }
+
+
+    // here we making unlike button
+    function UnLikeBtn(tweet){            
+        return "<button class='btn btn-outline-primary btn-sm' onclick=handleTweetActionBtn(" + 
+        tweet.id + "," + tweet.likes + ",'unlike')> Unlike</button>" // onclick of this button this will calling the function that will handle the like and unlike
+    }
+
 
     // this function we make for the formating of the data what we get
     function formatTweetElement(tweet) {       
         // we give the class name and unique id to each div id='"tweet.id"'                                   
         var formattedTweet = "<div class='col-12 col-md-10 mx-auto border rounded py-3 mb-4' id='tweet-"+ tweet.id +"'><p>" 
-        + tweet.content + "</p> <div class='btn-group'>" + LikeBtn(tweet) + "</div></div>"  // we are calling like btn function which help to make the btn for each and also we passing the same tweet for further function
+        + tweet.content + "</p> <div class='btn-group'>" + LikeBtn(tweet) + UnLikeBtn(tweet) +  RetweetBtn(tweet) + "</div></div>"  // we are calling like btn function which help to make the btn for each and also we passing the same tweet for further function
         return formattedTweet    
     }
 

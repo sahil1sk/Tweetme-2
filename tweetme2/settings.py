@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['127.0.0.1']
 
 LOGIN_URL = '/login'        # so here is the we change the value because default value is accounts/login
 MAX_TWEET_LENGTH = 240      # here we adding the max_tweet length
+TWEET_ACTION_OPTIONS = ["like", "unlike", "retweet"]  # so here we adding the option in the list 
 
 # Application definition
 
@@ -123,3 +124,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+DEFAULT_RENDERER_CLASSES = [
+    'rest_framework.renderers.JSONRenderer',  # this will help to remove the rest design from the api
+]
+
+# so if we are in debug mode means debug set to true then we will render rest for checking
+# otherwise we will only showing the json
+if DEBUG:
+    DEFAULT_RENDERER_CLASSES += [
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework.authentication.SessionAuthentication'       # here we adding session authentication
+    ],
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES  # so here we adding what classes we want to render which we write above
+
+}
