@@ -26,7 +26,7 @@ SECRET_KEY = 'h%b(6-98+0^gqr+0a07ie!dh2d$^f3by^tplpu$bj57dac)uz!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 LOGIN_URL = '/login'        # so here is the we change the value because default value is accounts/login
 MAX_TWEET_LENGTH = 240      # here we adding the max_tweet length
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',                  # --> cors headers for connection with react    
     'rest_framework',               # --> adding rest framework
     'tweets',                       # --> here we add the model that we make
 ]
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',                # --> Adding to use ability of django corsheaders
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -124,6 +126,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [                                       # here we provide one more base dir 
+    os.path.join(BASE_DIR, "static"),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static-root")  # when we run the collectstatic then all the data will be placed in the static-root folder
+
+CORS_ORIGIN_ALLOW_ALL = True    # all website are allow to make connection using the given regex
+CORS_URLS_REGEX = r'^/api/.*$'  # using /api/ we are able to fetch any url
 
 DEFAULT_RENDERER_CLASSES = [
     'rest_framework.renderers.JSONRenderer',  # this will help to remove the rest design from the api

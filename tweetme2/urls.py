@@ -15,6 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView  # this will help to render every template which we want
 from tweets.views import( 
     home_view, 
     tweet_detail_view, 
@@ -27,11 +30,20 @@ from tweets.views import(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',home_view),
-    path('create-tweet', tweet_create_view),                    # this help to create the tweet
-    path('tweets', tweet_list_view),                            # this will show the list of the tweets
-    path('tweets/<int:tweet_id>', tweet_detail_view),           # this is for getting the detail of specific tweet
-    #path('api/tweets/action', tweet_action_view),               # so here we are getting the action
-    #path('api/tweets/<int:tweet_id>/delete', tweet_delete_view),# this help to delete the tweet
+    path('react/', TemplateView.as_view(template_name='react.html')),   # this will help to render react template directly
+    path('create-tweet', tweet_create_view),                            # this help to create the tweet
+    path('tweets', tweet_list_view),                                    # this will show the list of the tweets
+    path('tweets/<int:tweet_id>', tweet_detail_view),                   # this is for getting the detail of specific tweet
+    #path('api/tweets/action', tweet_action_view),                      # so here we are getting the action
+    #path('api/tweets/<int:tweet_id>/delete', tweet_delete_view),       # this help to delete the tweet
     path('api/tweets/', include('tweets.urls'))
 ]
+
+# settings.DEBUG is true then take the given urls
+if settings.DEBUG: 
+    urlpatterns += static(settings.STATIC_URL, 
+                    document_root=settings.STATIC_ROOT)
+
+
+
 

@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from .models import Tweet                   # We importing model for testing
-from rest_framework.test import APIClient   # we importing API CLIENT
+from rest_framework.test import APIClient   # we importing API CLIENT this help to login the user as we see get_client function
 
 # In this File we basically test the model everything is working correctly or not
 # for run the test use "python manage.py test"
@@ -14,7 +14,8 @@ User = get_user_model()   # here we are getting the user model  to create user
                                     # the tweet will be deleted after that function is completed so if you want that the tweet that you create must remain at last then create in setUp
 
 class TweetTestCase(TestCase):
-    # setUp is the built in method which allows to create the user
+    # setUp is the built in method which allows to create the user and all other things
+    # the things which we are create in setUp are remain at the end of test when we are runing the test
     def setUp(self):                                                        # create many user as we need                         
         user = User.objects.create_user(username="cfe", password="somepassword")   # here we creating the user and we are also able to 
         user2 =  User.objects.create_user(username="sahil", password="password")
@@ -25,7 +26,8 @@ class TweetTestCase(TestCase):
         user = User.objects.get(username="cfe")
         self.assertEqual(user.username, "cfe")         # assert will check the username is equal to cfe if yes then this line is pass otherwise not
                
-                                                                          
+
+    # this function we use to check the tweet are created succesfully                                                                      
     def test_tweet_created(self):
         user = User.objects.get(username = "cfe")
         tweet_obj = Tweet.objects.create(content="My Third tweet", user=user)
@@ -113,9 +115,9 @@ class TweetTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
         
         client = self.get_client()
-        response = client.delete("/api/tweets/2/delete/")   # again deleting the tweet with id 2 that is created by another user as you see above in setUp function 
-        print("Here is the delete: ",response.json())       # so it will send code 401 means the login user is not able to delete the tweet which is created by other user
-        self.assertEqual(response.status_code, 401)
+        response_incorrect_owner = client.delete("/api/tweets/2/delete/")   # again deleting the tweet with id 2 that is created by another user as you see above in setUp function 
+        print("Here is the delete: ",response_incorrect_owner.json())       # so it will send code 401 means the login user is not able to delete the tweet which is created by other user
+        self.assertEqual(response_incorrect_owner.status_code, 401)
         
       
         

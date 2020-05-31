@@ -8,7 +8,7 @@ User = settings.AUTH_USER_MODEL
 
 # through this table we add the like to tweet 
 # this model we basically make when that like is added
-class TweetLike(models.Model):
+class TweetLike(models.Model):   # the through is present in likes help to add data in this model
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tweet = models.ForeignKey("Tweet", on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
