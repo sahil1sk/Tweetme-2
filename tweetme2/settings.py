@@ -140,18 +140,22 @@ DEFAULT_RENDERER_CLASSES = [
     'rest_framework.renderers.JSONRenderer',  # this will help to remove the rest design from the api
 ]
 
+DEFAULT_AUTHENTICATION_CLASSES = [            # this is default authentication              
+    'rest_framework.authentication.SessionAuthentication'
+]
+
 # so if we are in debug mode means debug set to true then we will render rest for checking
 # otherwise we will only showing the json
 if DEBUG:
     DEFAULT_RENDERER_CLASSES += [
         'rest_framework.renderers.BrowsableAPIRenderer',
     ]
+    DEFAULT_AUTHENTICATION_CLASSES += [                 # here if we are in debug mode we also add our authetiation that if not user then it will take automatically random user
+        'tweetme2.rest_api.dev.DevAuthentication'
+    ]
 
 REST_FRAMEWORK = {
-
-    'DEFAULT_AUTHENTICATION_CLASSES':[
-        'rest_framework.authentication.SessionAuthentication'       # here we adding session authentication
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': DEFAULT_AUTHENTICATION_CLASSES,
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES  # so here we adding what classes we want to render which we write above
 
 }

@@ -29,13 +29,14 @@ from tweets.views import(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',home_view),
-    path('react/', TemplateView.as_view(template_name='react.html')),   # this will help to render react template directly
-    path('create-tweet', tweet_create_view),                            # this help to create the tweet
-    path('tweets', tweet_list_view),                                    # this will show the list of the tweets
-    path('tweets/<int:tweet_id>', tweet_detail_view),                   # this is for getting the detail of specific tweet
-    #path('api/tweets/action', tweet_action_view),                      # so here we are getting the action
-    #path('api/tweets/<int:tweet_id>/delete', tweet_delete_view),       # this help to delete the tweet
+    path('',home_view), 
+    path('react/', TemplateView.as_view(template_name='react_via_dj.html')),    # here we display template directly   
+    #path('react/', TemplateView.as_view(template_name='react.html')),          # this will help to render react template directly react.html is the file which we copy
+    path('create-tweet', tweet_create_view),                                    # this help to create the tweet
+    path('tweets', tweet_list_view),                                            # this will show the list of the tweets
+    path('tweets/<int:tweet_id>', tweet_detail_view),                           # this is for getting the detail of specific tweet
+    #path('api/tweets/action', tweet_action_view),                              # so here we are getting the action
+    #path('api/tweets/<int:tweet_id>/delete', tweet_delete_view),               # this help to delete the tweet
     path('api/tweets/', include('tweets.urls'))
 ]
 

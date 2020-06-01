@@ -30,8 +30,8 @@ def home_view(request, *args, **kwargs):
 @api_view(['POST']) # here in the list we allow which method will accept this function so here we allow POST
 @permission_classes([IsAuthenticated])   # there we add premission that user must be autheticated
 def tweet_create_view(request, *args, **kwargs):
-    if request.method == "POST":
-        serializer = TweetCreateSerializer(data = request.POST)    # data is required to pass in the serializer    
+    if request.method == "POST":            # data is required to pass in the serializer
+        serializer = TweetCreateSerializer(data = request.data)        # we have to take it as request.data because we given json 
         if serializer.is_valid():
             serializer.save(user = request.user)
             return Response(serializer.data, status=201)        # we are using Response in serializer because it will send data in Json form

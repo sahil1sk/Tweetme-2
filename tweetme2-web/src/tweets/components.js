@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {loadTweets} from '../lookup'
+import {loadTweets, createTweet} from '../lookup'
 
 // this function is help to making new tweets
 export function TweetsComponent(props) {
@@ -7,16 +7,25 @@ export function TweetsComponent(props) {
   // here we creating ref for the textarea we see another way in our react website  
   const textAreaRef = React.createRef()
   const [newTweets, setNewTweets] = useState([])    // here we make set state for adding new component
+  
+  // this funtion is called when we get response and status from tthe createTweet function and this 
+  // help to setting up the new tweet state
+  const handleBackendUpdate = (response, status) => {
+    let tempNewTweets = [...newTweets] // ... just help to copy the state
+    if(status === 201){
+      tempNewTweets.unshift(response)         // here we use unshift so that it will come on first
+      setNewTweets(tempNewTweets)             // here we are setting the tweet  
+    }else{
+      alert("An error occured please try again later");
+      console.log(response);
+    }
+  }
+  
   const handleSubmit = (event) => {
     event.preventDefault()
     const newVal = textAreaRef.current.value 
-    let tempNewTweets = [...newTweets]        // here we just copy the state 
-    tempNewTweets.unshift({                   // unshift will help to add newest tweet on begining
-      content:newVal,
-      likes:0,
-      id: 1233
-    })
-    setNewTweets(tempNewTweets)             // here we setting the state normally
+    // create tweet is the function which we export from lookup which help to create the new tweet
+    createTweet(newVal, handleBackendUpdate)            // so here we are passing the newvalue in the fun and getting back the response and status whcih we then handle in upperfunction
     textAreaRef.current.value = ''
   }
 
@@ -40,9 +49,10 @@ export function TweetsComponent(props) {
 export function TweetsList(props) {
     const [tweetsInit, setTweetsInit] = useState([])
     const [tweets, setTweets] = useState([])
+    const [tweetsDidSet, setTweetsDisSet] = useState(false)
 
     useEffect(() => {
-      const final = [...props.newTweets].concat(tweetsInit) // so here we concating the new tweet which we get
+      const final = [...props.newTweets].concat(tweetsInit) //... will hep to copy the state means making as that props so here we concating the new tweet which we get through props
       if (final.length !== tweets.length){
         setTweets(final)
       }    
@@ -51,15 +61,18 @@ export function TweetsList(props) {
     // useEffect will help to implement all the function which we are able to implement in the class component    
     // here using the given useEffect we load all the data
     useEffect(() => {
-      const myCallback = (response, status) => {
-        if (status === 200){
-          setTweetsInit(response)       //here we are setting the data in the setTweets
-        } else {
-          alert("There was an error")
+      if (tweetsDidSet === false){                  // we make this if after getting the data it the given function will not call again
+        const myCallback = (response, status) => {
+          if (status === 200){
+            setTweetsInit(response)       //here we are setting the data in the setTweets
+            setTweetsDisSet(true)
+          } else {
+            alert("There was an error")
+          }
         }
+        loadTweets(myCallback)    // loadTweets import this will provide data
       }
-      loadTweets(myCallback)    // loadTweets import this will provide data
-    }, []) 
+    }, [tweetsDidSet,setTweetsDisSet]) 
 
     // we are getting the data in tweets through setTweets
     return tweets.map((item, index)=>{
