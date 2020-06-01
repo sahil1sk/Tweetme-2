@@ -78,25 +78,45 @@ export function TweetsList(props) {
       }
     }, [tweetsDidSet,setTweetsDisSet]) 
 
+    // this function will help to handle the retweet
+    const handleDidRetweet = (newTweet) => {
+      const updateTweetsInit = [...tweetsInit]    // so here we just make copy of tweetsInit state
+      updateTweetsInit.unshift(newTweet)          // we are adding newTweet means retweet in unshift mode so that it will come first
+      setTweetsInit(updateTweetsInit)         // and here we finally set the retweet
+    
+      const updateFinalTweets = [...tweets]   // so here we again make the state copy
+      updateFinalTweets.unshift(tweets)       // so here we set the tweets 
+      setTweets(updateFinalTweets)            // and finally setting the data
+
+      //NOTE we do this with both tweets and tweetInit so that it length will matched 
+      // Because on upper useEffect we make condition if (final.length !== tweets.length) the length is not matched then set the tweet 
+        
+    }
+
     // we are getting the data in tweets through setTweets
     return tweets.map((item, index)=>{
-      return <Tweet tweet={item} className='my-5 py-5 border bg-white text-dark' key={`${index}-{item.id}`} /> // here we are calling the tweet function 
+      return( 
+        <Tweet 
+        tweet={item} 
+        didRetweet={handleDidRetweet} 
+        className='my-5 py-5 border bg-white text-dark' 
+        key={`${index}-{item.id}`} 
+        /> // here we are calling the tweet function 
+      );    
     })
 }
 
 // this function will help to create the action buttton
 export function ActionBtn(props){          
-  const {tweet, action} = props  
-  let [likes, setLikes] = useState(tweet.likes ? tweet.likes : 0)   // if there is tweet.likes exists then take otherwise if not means undefined then take zero
-  //let [userLike, setUserLike] = useState(tweet.userLike === true ? true : false)
+  const {tweet, action, didPerformAction} = props  
+  const likes = tweet.likes ? tweet.likes : 0   
   const className = props.className ? props.className : 'btn btn-primary btn-sm'
   const actionDisplay = action.display ? action.display : 'Action'      // if action.dispaly exists then use action.display otherwise action
   
   const handleActionBackendEvent = (response, status) => {
-    console.log("Here is it",response,status);
-    if(status === 200){
-      setLikes(response.likes)
-    //  setUserLike(true)
+    console.log(response);
+    if((status === 200 || status===201) && didPerformAction ){
+      didPerformAction(response,status)            // so here we send the props which contain response
     }
   }
 
@@ -117,30 +137,45 @@ export function ParentTweet(props) {
     tweet.parent ? <div className='row'>
       <div className='col-11 mx-auto p-3 border rounded'>
         <p className='mb-0 text-muted small'>Retweet</p>
-        <Tweet className={' '} tweet={tweet.parent} />      {/*here we send the tweet.parent because we want to show from here the parent tweet*/}
+        <Tweet hideActions className={' '} tweet={tweet.parent} />      {/*here we send the tweet.parent because we want to show from here the parent tweet but we send classname is empty because we already set the style for it*/} 
       </div>
     </div> : null
   );
 }
 
-
-
 // this function will call in map for formatting the tweets
 export function Tweet(props) {
-    const {tweet} = props   //const {tweet} = props === tweet = props.tweet
+    const {tweet, didRetweet, hideActions} = props   //const {tweet} = props === tweet = props.tweet
+    const [actionTweet, setActionTweet] = useState(props.tweet ? props.tweet : null)
     const className = props.className ? props.className : "col-10 mx-auto-md-6"
-    return <div className={className}>
-        <div>
-          <p>{tweet.id}-{tweet.content}</p>
-          <ParentTweet tweet={tweet} />      {/* so here we call the parent tweet if there is any parent tweet so we will show othwerwise we will return null */}
-        </div>
+   
+    // here we setting the tweet which we get as props
+    const handlePerformAction = (newActionTweet,status) => {
+      if(status === 200){
+        setActionTweet(newActionTweet)    // here we setting the tweet which we get back measns setting like or unlike
+      }else if(status === 201){
+        if(didRetweet){
+          didRetweet(newActionTweet) // so here send to into the props to handle retweet
+        }
+      }
+    }  
+   
+    return( 
+      <div className={className}>
+          <div>
+            <p>{tweet.id}-{tweet.content}</p>
+            <ParentTweet tweet={tweet} />      {/* so here we call the parent tweet if there is any parent tweet so we will show othwerwise we will return null */}
+          </div>
 
-        <div className='btn btn-group'>
-        <ActionBtn tweet={tweet} action={{type:"like", display:"Likes"}}/>            {/*Calling for making the button we are calling function ActionButton*/}
-        <ActionBtn tweet={tweet} action={{type:"unlike", display:"Unlike"}}/>
-        <ActionBtn tweet={tweet} action={{type:"retweet", display:"Retweet"}}/>
-        </div>
-    </div>
+        {/* hideaction will not equal to true when we send it in props from parent function*/}
+        {(actionTweet && hideActions !== true) && <div className='btn btn-group'>     {/*didPerformAction will get the props back with which help we update the tweet*/}
+            <ActionBtn tweet={actionTweet} didPerformAction={handlePerformAction} action={{type:"like", display:"Likes"}}/>            {/*Calling for making the button we are calling function ActionButton*/}
+            <ActionBtn tweet={actionTweet} didPerformAction={handlePerformAction} action={{type:"unlike", display:"Unlike"}}/>
+            <ActionBtn tweet={actionTweet} didPerformAction={handlePerformAction} action={{type:"retweet", display:"Retweet"}}/>
+            </div>
+        }
+      </div>
+    );
 }
   
 

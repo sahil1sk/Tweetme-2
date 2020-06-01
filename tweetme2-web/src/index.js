@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import {TweetsComponent} from './tweets'
+import {TweetsComponent} from './tweets/index'
 import * as serviceWorker from './serviceWorker';
 
 
@@ -19,8 +19,11 @@ if (appEl) {
 // so we get the id from index.html file where we set id is tweetme-2 instead of
 // root so it will check if the element is there then it will render otherwise no
 const tweetsEl = document.getElementById("tweetme-2");
+const e = React.createElement() // so here we create the element 
 if (tweetsEl) {
-  ReactDOM.render(<TweetsComponent/>, tweetsEl);
+                                        // so we fetch the dataset that is written in index.html file div
+   const MyComponent = e(TweetsComponent, tweetsEl.dataset) // so this is the also way to give all the data  to the component
+   ReactDOM.render(MyComponent, tweetsEl);
 }
 
 // If you want your app to work offline and load faster, you can change
