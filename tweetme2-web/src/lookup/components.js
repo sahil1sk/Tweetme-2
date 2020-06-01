@@ -19,7 +19,7 @@ function getCookie(name) {
 */
 
 // this function is used to deal with the api
-function lookup(method, endpoint, callback, data) {
+export function BackendLookup(method, endpoint, callback, data) {
   let jsonData;
   if (data){
     jsonData = JSON.stringify(data)
@@ -45,12 +45,3 @@ function lookup(method, endpoint, callback, data) {
   xhr.send(jsonData);
 }
 
-// this fucntion is used to crete the api
-export function createTweet(newTweet, callback){
-  lookup("POST", "/tweets/create/", callback, {content: newTweet})
-}
-
-// this function is used to load the api
-export function loadTweets(callback) {
-    lookup("GET", "/tweets/", callback)
-}

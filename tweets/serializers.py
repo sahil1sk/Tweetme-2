@@ -41,12 +41,12 @@ class TweetCreateSerializer(serializers.ModelSerializer):
 class TweetSerializer(serializers.ModelSerializer):
     # SerializerMethodField This is a read-only field. It gets its value by calling the method 
     likes =  serializers.SerializerMethodField(read_only = True)
-    og_tweet = TweetCreateSerializer(source="parent",read_only = True) # so here we read the data of parent tweet that's why we use TweetCreateSerializer
+    parent = TweetCreateSerializer(read_only = True) # so here we read the data of parent tweet that's why we use TweetCreateSerializer
     #content = serializers.SerializerMethodField(read_only = True) # here we made this for get_content method to show the data
 
     class Meta:
         model = Tweet
-        fields = ['id', 'content', 'likes', 'is_retweet', "og_tweet"] # is_retweet provide true or false it is basically that function which we make in the model.py file under Tweet model so that why we are able to use this here
+        fields = ['id', 'content', 'likes', 'is_retweet', "parent"] # is_retweet provide true or false it is basically that function which we make in the model.py file under Tweet model so that why we are able to use this here
 
     def get_likes(self, obj):       # this function we make to count the likes
         return obj.likes.count() 
@@ -59,3 +59,4 @@ class TweetSerializer(serializers.ModelSerializer):
             content = obj.parent.content
         return content
     '''
+

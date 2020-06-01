@@ -2,7 +2,7 @@
 import React from 'react'; 
 import logo from './logo.svg';
 import './App.css';
-import {TweetsComponent} from './tweets'
+import {TweetsComponent} from './tweets/index'
 
 
 
