@@ -19,25 +19,18 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView  # this will help to render every template which we want
 from tweets.views import( 
-    home_view, 
-    tweet_detail_view, 
-    tweet_action_view, 
-    tweet_list_view, 
-    tweet_create_view, 
-    tweet_delete_view,
+    local_tweets_list_view,
+    local_tweets_detail_view,
+    local_tweets_profile_view,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',home_view), 
-    path('react/', TemplateView.as_view(template_name='react_via_dj.html')),    # here we display template directly   
-    #path('react/', TemplateView.as_view(template_name='react.html')),          # this will help to render react template directly react.html is the file which we copy
-    path('create-tweet', tweet_create_view),                                    # this help to create the tweet
-    path('tweets', tweet_list_view),                                            # this will show the list of the tweets
-    path('tweets/<int:tweet_id>', tweet_detail_view),                           # this is for getting the detail of specific tweet
-    #path('api/tweets/action', tweet_action_view),                              # so here we are getting the action
-    #path('api/tweets/<int:tweet_id>/delete', tweet_delete_view),               # this help to delete the tweet
-    path('api/tweets/', include('tweets.urls'))
+    path('',local_tweets_list_view),                             # this is for showing all the tweets             
+    path('<int:tweet_id>', local_tweets_detail_view),             # this is for showing the detail of the tweet 
+    path('profile/<str:username>', local_tweets_profile_view),   # this is for showing the tweet related to username
+    path('api/tweets/', include('tweets.urls')),   
+    
 ]
 
 # settings.DEBUG is true then take the given urls

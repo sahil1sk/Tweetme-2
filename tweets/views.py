@@ -25,8 +25,22 @@ def home_view(request, *args, **kwargs):
 
 
 
+# this function is used to render the list
+def local_tweets_list_view(request, *args, **kwargs):
+    return render(request, "tweets/list.html")
+
+# this is used to show the detail of each tweet
+def local_tweets_detail_view(request, tweet_id, *args, **kwargs):
+    return render(request, "tweets/detail.html", context={"tweet_id": tweet_id})
+
+# this is used to show the tweet related to the profile
+def local_tweets_profile_view(request, username,*args, **kwargs):
+    return render(request, "tweets/profile.html", context={"profile_username": username})
+
+
+
 # here we create this function using rest_frame work for creating tweets this method we call internally by javascript
-#@authentication_classes([SessionAuthentication])  but this is built in permission_classes
+# @authentication_classes([SessionAuthentication])  but this is built in permission_classes
 @api_view(['POST']) # here in the list we allow which method will accept this function so here we allow POST
 @permission_classes([IsAuthenticated])   # there we add premission that user must be autheticated
 def tweet_create_view(request, *args, **kwargs):
@@ -75,6 +89,7 @@ def tweet_delete_view(request, tweet_id, *args, **kwargs):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def tweet_action_view(request, *args, **kwargs):
+  
     '''
         id is required
         Action options are: like, unlike, retweet
@@ -110,7 +125,7 @@ def tweet_action_view(request, *args, **kwargs):
             serializer = TweetSerializer(new_tweet)       # here we serialize the tweet
             return Response(serializer.data, status=201)                                        
 
-    return Response({"message":"afterIf"}, status=200)
+    return Response({"message":"something"}, status=200)
 
 
 # this function is used to create the tweets

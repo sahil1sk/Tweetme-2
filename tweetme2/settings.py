@@ -136,6 +136,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static-root")  # when we run the collectst
 CORS_ORIGIN_ALLOW_ALL = True    # all website are allow to make connection using the given regex
 CORS_URLS_REGEX = r'^/api/.*$'  # using /api/ we are able to fetch any url
 
+
+
 DEFAULT_RENDERER_CLASSES = [
     'rest_framework.renderers.JSONRenderer',  # this will help to remove the rest design from the api
 ]

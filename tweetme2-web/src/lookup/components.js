@@ -1,7 +1,5 @@
-
-// this function is used to create the token  
-/*
-function getCookie(name) {
+// this function helps to make the api
+/*function getCookie(name) {
   var cookieValue = null;
   if (document.cookie && document.cookie !== '') {
       var cookies = document.cookie.split(';');
@@ -18,7 +16,7 @@ function getCookie(name) {
 }
 */
 
-// this function is used to deal with the api
+// this function is used to deal with api
 export function BackendLookup(method, endpoint, callback, data) {
   let jsonData;
   if (data){
@@ -28,13 +26,15 @@ export function BackendLookup(method, endpoint, callback, data) {
   const url = `http://localhost:8000/api${endpoint}`
   xhr.responseType = "json"
   //const csrftoken = getCookie('csrftoken');
+  xhr.open(method, url)
+  xhr.setRequestHeader("Content-Type", "application/json")
+  
   //if (csrftoken){
     //xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
     //xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-    //xhr.setRequestHeader("X-CSRFToken", csrftoken)
+    //xhr.setRequestHeader("X-CSRFToken", csrftoken)  
   //}
-  xhr.open(method, url)
-  xhr.setRequestHeader("Content-Type", "application/json")
+  
   xhr.onload = function() {
     callback(xhr.response, xhr.status)
   }
@@ -42,6 +42,5 @@ export function BackendLookup(method, endpoint, callback, data) {
     console.log(e)
     callback({"message": "The request was an error"}, 400)
   }
-  xhr.send(jsonData);
+  xhr.send(jsonData)
 }
-

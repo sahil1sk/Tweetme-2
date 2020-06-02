@@ -33,6 +33,7 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <!-- data- will help to grab the data by index.js file-->
+    <div id='tweet-container'></div>
     <div id="tweetme-2" data-username="sahil" data-can-tweet="false"></div>
     <!--
       This HTML file is a template.
@@ -44,5 +45,23 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <script>
+   
+      var path  = window.location.pathname     // here we get the path
+      var idRegex = /(?<tweetid>\d+)/         // so here we make the regex
+      var match = path.match(idRegex)       // so her we check the path match with our regex that we make 
+      if(match){                          // if the regex match then we go into the if then we will show the tweet detail   
+        var tweetId = match.groups.tweetid    // so here we get the id from the match
+        var tweeme2EL = document.getElementById("tweetme-2")
+        tweeme2EL.className = 'd-none'                        // here we set all the tweets to dispare
+        var tweetId = tweetId     // because of classname tweetme-2-detail then it will be fetched by index.js file and then we will set the data
+        var tweetEl = "<div class='tweetme-2-detail' data-tweet-id="+ tweetId +" data-class-name='col-6 mx-auto'></div>" // so here we set the id
+        var mainContainer = document.getElementById("tweet-container")  // then get the upper div by it's id
+        mainContainer.innerHTML += tweetEl        // then replace its innerhtml with our <div> which contains id tweet-2-detail  
+      }
+   
+   </script>
+
   </body>
 </html>

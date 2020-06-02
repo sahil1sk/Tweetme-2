@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import {TweetsComponent} from './tweets/index'
+import {TweetsComponent, TweetDetailComponent} from './tweets/index'
 import * as serviceWorker from './serviceWorker';
 
 
@@ -26,6 +26,16 @@ if (tweetsEl) {
   const MyComponent = e(TweetsComponent, tweetsEl.dataset); // so this is the also way to give all the data  to the component
   ReactDOM.render(MyComponent, tweetsEl);
 }
+
+// this will get all of the elements of the div which class name is tweetme-2-detail
+const tweetDetailElements = document.querySelectorAll(".tweetme-2-detail") 
+
+// forEach is basically a loop means if there is more than one container 
+// user to render data of all container one by none
+tweetDetailElements.forEach(container => {
+  const MyComponent = e(TweetDetailComponent, container.dataset);
+  ReactDOM.render(MyComponent,container);  
+})
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
