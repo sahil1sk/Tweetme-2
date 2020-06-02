@@ -41,6 +41,9 @@ def tweet_create_view(request, *args, **kwargs):
 @api_view(['GET'])
 def tweet_list_view(request, *args, **kwargs):
     qs = Tweet.objects.all()
+    username = request.GET.get('username')       # so this will fetch the username
+    if username != None:                         # iexact will help if we get Justin but in the database having justin then it will return that name                                        
+        qs = qs.filter(user__username__iexact=username)
     serializer = TweetSerializer(qs, many=True)  # many to true menas many tweets are allowed
     return Response(serializer.data, status=200)
 

@@ -1,8 +1,13 @@
-import {ActionBtn, Tweet, TweetsList, TweetsComponent} from './components' // here we export from component.js
+import {ActionBtn} from './buttons'
+import {TweetsComponent} from './components' 
+import {Tweet} from './detail'
+import {TweetsList} from './list'
+import {TweetCreate} from './create'
 
 export {
     ActionBtn,
     Tweet,
     TweetsList,
-    TweetsComponent
+    TweetsComponent,
+    TweetCreate
 }
