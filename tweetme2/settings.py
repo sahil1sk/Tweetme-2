@@ -43,13 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',                  # --> cors headers for connection with react    
     'rest_framework',               # --> adding rest framework
-    'tweets',                       # --> here we add the model that we make
+    'tweets',                       # --> Including our tweet app
+    'accounts',                     # --> Including our account app
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',             # --> Adding to use ability of django corsheaders
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',                # --> Adding to use ability of django corsheaders
+    'django.contrib.sessions.middleware.SessionMiddleware',               
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -133,8 +134,8 @@ STATICFILES_DIRS = [                                       # here we provide one
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static-root")  # when we run the collectstatic then all the data will be placed in the static-root folder
 
-CORS_ORIGIN_ALLOW_ALL = True    # all website are allow to make connection using the given regex
-CORS_URLS_REGEX = r'^/api/.*$'  # using /api/ we are able to fetch any url
+#CORS_ORIGIN_ALLOW_ALL = True    # all website are allow to make connection using the given regex
+#CORS_URLS_REGEX = r'^/api/.*$'  # using /api/ we are able to fetch any url
 
 
 
@@ -152,12 +153,17 @@ if DEBUG:
     DEFAULT_RENDERER_CLASSES += [
         'rest_framework.renderers.BrowsableAPIRenderer',
     ]
-    DEFAULT_AUTHENTICATION_CLASSES += [                 # here if we are in debug mode we also add our authetiation that if not user then it will take automatically random user
-        'tweetme2.rest_api.dev.DevAuthentication'
-    ]
+#    DEFAULT_AUTHENTICATION_CLASSES += [                 # here if we are in debug mode we also add our authetiation that if not user then it will take automatically random user
+ #       'tweetme2.rest_api.dev.DevAuthentication'
+  #  ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': DEFAULT_AUTHENTICATION_CLASSES,
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES  # so here we adding what classes we want to render which we write above
 
 }
+
+# here we allow the url which are able to fetch our api
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+]

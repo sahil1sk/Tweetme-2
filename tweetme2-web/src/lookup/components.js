@@ -1,5 +1,6 @@
 // this function helps to make the api
-/*function getCookie(name) {
+
+function getCookie(name) {
   var cookieValue = null;
   if (document.cookie && document.cookie !== '') {
       var cookies = document.cookie.split(';');
@@ -14,28 +15,33 @@
   }
   return cookieValue;
 }
-*/
 
 // this function is used to deal with api
-export function BackendLookup(method, endpoint, callback, data) {
+export function backendLookup(method, endpoint, callback, data) {
   let jsonData;
   if (data){
     jsonData = JSON.stringify(data)
   }
   const xhr = new XMLHttpRequest()
-  const url = `http://localhost:8000/api${endpoint}`
+  const url = `http://127.0.0.1:8000/api${endpoint}`
   xhr.responseType = "json"
-  //const csrftoken = getCookie('csrftoken');
+  const csrftoken = getCookie('csrftoken');
   xhr.open(method, url)
   xhr.setRequestHeader("Content-Type", "application/json")
-  
-  //if (csrftoken){
-    //xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
-    //xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-    //xhr.setRequestHeader("X-CSRFToken", csrftoken)  
-  //}
-  
+
+  if (csrftoken){
+   // xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+  }
+
   xhr.onload = function() {
+    if(xhr.status === 403 && xhr.response){       // if the status is 403 then it true and we check inner if
+      const detail = xhr.response.detail          // so here we take the detail of the response
+      if(detail === "Authentication credentials were not provided."){  // so in this if we check the detail is equal to authentication not provided then redirect the user to login page
+        window.location.href = "/login?showLoginRequired=true"              // we also add show login required to true
+      }
+    }
     callback(xhr.response, xhr.status)
   }
   xhr.onerror = function (e) {
