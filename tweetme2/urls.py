@@ -38,7 +38,8 @@ urlpatterns = [
     path('api/tweets/', include('tweets.api.urls')),
     path('login/', login_view),
     path('logout/', logout_view),
-    path('register/', register_view)   
+    path('register/', register_view),
+    re_path(r'api/profiles?/', include('profiles.api.urls')),   # this will include url of api that we make for follow and unfollow
     
 ]
 

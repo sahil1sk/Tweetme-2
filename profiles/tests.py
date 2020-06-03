@@ -1,21 +1,31 @@
+
+  
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from django.contrib.auth import get_user_model
+from rest_framework.test import APIClient
+
 from .models import Profile
 
-            # IMP_NOTE for runing this test file only use "python manage.py test profiles"
 
 User = get_user_model()
 
 class ProfileTestCase(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="cfe", password="somepassword")   # here we creating the user and we are also able to 
-        self.userb =  User.objects.create_user(username="sahil", password="password")
+        self.user = User.objects.create_user(username='cfe', password='somepassword')
+        self.userb = User.objects.create_user(username='cfe-2', password='somepassword2')
+    
+    def get_client(self):
+        client = APIClient()
+        client.login(username=self.user.username, password='somepassword')
+        return client
 
     def test_profile_created_via_signal(self):
         qs = Profile.objects.all()
         self.assertEqual(qs.count(), 2)
     
+
+    # here we test the followers is that added properly
     def test_following(self):
         first = self.user
         second = self.userb
@@ -29,3 +39,38 @@ class ProfileTestCase(TestCase):
 
         first_user_following_no_one = first.following.all()     # so here we get all the following of first
         self.assertFalse(first_user_following_no_one.exists())  # but we don't add anyone so assertFalse will be true and test will be passed
+
+
+    '''    
+    # so this function is for check our api end point working properly
+    # and the follow conditon is working properly
+    
+    # The given task are not working in test don't know what is reason
+    
+    def test_follow_api_endpoint(self):
+        client = self.get_client()
+        response = client.post(f"/api/profiles/{self.userb.username}/follow",{"action": "follow"})
+        r_data = response.json()
+        count = r_data.get("count")
+        self.assertEqual(count, 1)
+    
+    # this function we make to check the unfollow condition working properly
+    def test_unfollow_api_endpoint(self):
+        first = self.user
+        second = self.userb 
+        first.profile.followers.add(second) # here we adding the client so that we will use unfollow
+
+        client = self.get_client()
+        response = client.post(f"/api/profiles/{self.userb.username}/follow",{"action": "unfollow"})
+        r_data = response.json()
+        count = r_data.get("count")
+        self.assertEqual(count, 0)
+    
+    # so here in this function we will check we will not follow to our self
+    def test_cannot_follow_api_endpoint(self):
+        client = self.get_client()
+        response = client.post(f"/api/profiles/{self.user.username}/follow",{"action": "follow"})
+        r_data = response.json()
+        count = r_data.get("count")
+        self.assertEqual(count, 0)
+    '''

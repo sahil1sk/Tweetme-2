@@ -41,7 +41,7 @@ class TweetCreateSerializer(serializers.ModelSerializer):
 class TweetSerializer(serializers.ModelSerializer):
     # SerializerMethodField This is a read-only field. It gets its value by calling the method 
     likes =  serializers.SerializerMethodField(read_only = True)
-    parent = TweetCreateSerializer(read_only = True) # so here we read the data of parent tweet that's why we use TweetCreateSerializer
+    parent = TweetCreateSerializer(read_only = True) # the data is not in the serializer form so that's why we will use TweetCreateSerializer to serialize the data
     #content = serializers.SerializerMethodField(read_only = True) # here we made this for get_content method to show the data
 
     class Meta:
