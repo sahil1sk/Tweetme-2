@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',                  # --> cors headers for connection with react    
     'rest_framework',               # --> adding rest framework
     'tweets',                       # --> Including our tweet app
+    'profiles',                     # --> Including our profile app
     'accounts',                     # --> Including our account app
 ]
 
