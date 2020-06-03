@@ -58,6 +58,11 @@ class TweetTestCase(TestCase):
         self.assertEqual(len(response.json()),2)      # here we see lenth of tweet is 2 because we create 2 tweets in setUp function the other tweet we create in test_tweet_created after that function that tweet will automatically destroyed so length is 2
         print(response.json())
 
+    # Using this name we will check the related name will working properly or not
+    def test_tweets_related_name(self):
+        user = User.objects.get(username = "sahil")
+        self.assertEqual(user.tweets.count(), 1)
+
     # here we creating this method for checking the action like
     def test_action_like(self):
         client = self.get_client()
