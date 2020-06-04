@@ -1,6 +1,8 @@
 import random
 from django.db import models
 from django.conf import settings
+from django.db.models import Q  # Q will help to perform more filter or more qurey in one time
+
 
 # so we are able to get the user from the settings from AUTH_USER_MODEL given is the way
 # how to get user from the settings directly
@@ -12,6 +14,35 @@ class TweetLike(models.Model):   # the through is present in likes help to add d
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tweet = models.ForeignKey("Tweet", on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+# so this class will in function when it is called by the tweetManager
+class TweetQuerySet(models.QuerySet):
+    # so from view we call this method to perform the action then Query set will perform the action only with that method
+    def by_username(self, username):
+        return self.filter(user__username__iexact = username)
+
+    def feed(self, user):
+        profiles = user.following.exists()     # getting the all users where our user objects is exists
+        followed_users_id = []
+        if profiles:                  # so here we are getting the id of that user to whom we follow in efficient way                  
+            followed_users_id = user.following.values_list("user__id", flat=True)     
+
+        # self is now Tweet.objects
+        return self.filter(
+                Q(user__id__in = followed_users_id) |
+                Q(user=user) # so here this means that if there is our username then also return if i follow to i 
+            ).distinct().order_by("-timestamp")  # the user to whom we followed we get there using it's id and also by checking our user object exists at there
+    
+
+# And then here we calling this class 
+class TweetManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):               # so here we return the model data who  called tweet manager and return to query set
+        return TweetQuerySet(self.model, using=self._db)
+    
+    # so when we make a feed here then the get_querset will return data related to that user only query_set will not return whole model
+    def feed(self, user):                            
+        return self.get_queryset().feed(user)
+
 
 class Tweet(models.Model):
     # user = model.ForeignKey(User, null=True, on_delete=models.SET_NULL) # this means on delete the user their tweet will not be deleted
@@ -30,6 +61,8 @@ class Tweet(models.Model):
     image = models.FileField(upload_to='images/', blank=True, null=True) # blank means not required in django null means not required in database
     timestamp = models.DateTimeField(auto_now_add=True)
     
+    objects = TweetManager()      # so here we adding TweetManager to used as query set which we do in the tweet_feed_view view
+
     #def __str__(self):
      #   return self.content
 

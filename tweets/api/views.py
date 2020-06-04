@@ -39,22 +39,18 @@ def tweet_list_view(request, *args, **kwargs):
     qs = Tweet.objects.all()
     username = request.GET.get('username')       # so this will fetch the username
     if username != None:                         # iexact will help if we get Justin but in the database having justin then it will return that name                                        
-        qs = qs.filter(user__username__iexact=username)
+        qs = qs.by_username(username)           # so here we calling in model for query set
     serializer = TweetSerializer(qs, many=True)  # many to true menas many tweets are allowed
     return Response(serializer.data, status=200)
 
+# this function will return all the tweets to whom we follow
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def  tweet_feed_view(request, *args, **kwargs):
+def tweet_feed_view(request, *args, **kwargs):
     user = request.user
-    profiles = user.following.all()     # getting the all users where our user objects is exists
-    followed_users_id = []
-    if profiles.exists():
-        followed_users_id = [x.user.id for x in profiles]  # here we get the each userId to whom i follow
-    followed_users_id.append(user.id)
-    qs = Tweet.objects.filter(user__id__in = followed_users_id).order_by("-timestamp")  # so here we get all the tweets of the user to whom we followed using it's id
-    serializer = TweetSerializer(qs, many=True)  # many to true menas many tweets are allowed
-    return Response(serializer.data, status=200)
+    qs = Tweet.objects.feed(user)
+    serializer = TweetSerializer(qs, many=True)
+    return Response( serializer.data, status=200)
 
 
 # so this funcion we use to get the data on that id which we pass
