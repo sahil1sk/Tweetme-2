@@ -43,6 +43,20 @@ def tweet_list_view(request, *args, **kwargs):
     serializer = TweetSerializer(qs, many=True)  # many to true menas many tweets are allowed
     return Response(serializer.data, status=200)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def  tweet_feed_view(request, *args, **kwargs):
+    user = request.user
+    profiles = user.following.all()     # getting the all users where our user objects is exists
+    followed_users_id = []
+    if profiles.exists():
+        followed_users_id = [x.user.id for x in profiles]  # here we get the each userId to whom i follow
+    followed_users_id.append(user.id)
+    qs = Tweet.objects.filter(user__id__in = followed_users_id).order_by("-timestamp")  # so here we get all the tweets of the user to whom we followed using it's id
+    serializer = TweetSerializer(qs, many=True)  # many to true menas many tweets are allowed
+    return Response(serializer.data, status=200)
+
+
 # so this funcion we use to get the data on that id which we pass
 @api_view(['GET'])
 def tweet_detail_view(request, tweet_id, *args, **kwargs):

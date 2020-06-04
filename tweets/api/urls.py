@@ -5,10 +5,12 @@ from .views import(
     tweet_list_view, 
     tweet_create_view, 
     tweet_delete_view,
+    tweet_feed_view,
 )
 
 urlpatterns = [
     path('', tweet_list_view),                          # this will show the list of the tweets
+    path('feed/', tweet_feed_view),
     path('action/', tweet_action_view),                  # so here we are getting the action
     path('create/', tweet_create_view),                  # this help to create the tweet
     path('<int:tweet_id>/', tweet_detail_view),          # this is for getting the detail of specific tweet
