@@ -17,6 +17,9 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication # so here we importing session authentication 
 from rest_framework.decorators import api_view, authentication_classes,permission_classes # importing decorators
 from rest_framework.permissions import IsAuthenticated # here we importing the authentication premission
+
+from rest_framework.pagination import PageNumberPagination # for paginating we use this
+
 # we take the allowed hosts here from settings
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
@@ -40,17 +43,27 @@ def tweet_list_view(request, *args, **kwargs):
     username = request.GET.get('username')       # so this will fetch the username
     if username != None:                         # iexact will help if we get Justin but in the database having justin then it will return that name                                        
         qs = qs.by_username(username)           # so here we calling in model for query set
-    serializer = TweetSerializer(qs, many=True)  # many to true menas many tweets are allowed
-    return Response(serializer.data, status=200)
+    return get_paginated_queryset_response(qs, request) # so here we returning the method that will return page next
+
+# this function we make to set 20 page on each page this is basically paginator
+def get_paginated_queryset_response(qs, request):
+    paginator = PageNumberPagination()   # so here we get the paginator
+    paginator.page_size = 10             # here we set the page size   
+        
+    paginated_qs = paginator.paginate_queryset(qs, request) # so here we set the data which we get
+    
+    serializer = TweetSerializer(paginated_qs, many=True)       # here we serialize the data
+    return paginator.get_paginated_response(serializer.data)    # so here we return paginator response so that we will get another pages link
+
 
 # this function will return all the tweets to whom we follow
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def tweet_feed_view(request, *args, **kwargs):
-    user = request.user
-    qs = Tweet.objects.feed(user)
-    serializer = TweetSerializer(qs, many=True)
-    return Response( serializer.data, status=200)
+    user = request.user                  # this is normally getting user   
+    qs = Tweet.objects.feed(user)                   # so here we call the method from tweets model
+    return get_paginated_queryset_response(qs, request)
+    # return Response( serializer.data, status=200)
 
 
 # so this funcion we use to get the data on that id which we pass
