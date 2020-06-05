@@ -8,11 +8,13 @@ import {Tweet} from './detail'
 // and then calll
 // this will get data from tweet.component
 export function TweetsList(props) {
-    const [tweetsInit, setTweetsInit] = useState([])
-    const [tweets, setTweets] = useState([])
+    const [tweetsInit, setTweetsInit] = useState([])    // IN this we get data through inital useEffect
+    const [tweets, setTweets] = useState([])            // in this we get data through 2 useeffect
     const [tweetsDidSet, setTweetsDisSet] = useState(false)  // this state we make taht so that our code will run only onetime
     const [nextUrl, setNextUrl] = useState(null)    // this is for handling nexturl which is send by rest pagination
 
+    // 2. this is will work properly alter initial useEffect 
+    // this will also run when component did mount 
     useEffect(() => {
       const final = [...props.newTweets].concat(tweetsInit) //... will hep to copy the state means making as that props so here we concating the new tweet which we get through props
       if (final.length !== tweets.length){
@@ -20,6 +22,7 @@ export function TweetsList(props) {
       }    
     },[props.newTweets, tweets,tweetsInit]) // so we are passing this as dependency because we need that 
 
+    // 1. this is initial useEffect
     // useEffect will help to implement all the function which we are able to implement in the class component    
     // here using the given useEffect we load all the data this useEffect is component did mount
     useEffect(() => {
@@ -28,7 +31,6 @@ export function TweetsList(props) {
           if (status === 200){  // Because of rest pagination our list is now bind in results
             setNextUrl(response.next)
             setTweetsInit(response.results)       //here we are setting the data in the setTweets
-            //setTweets(response.status)
             setTweetsDisSet(true)
           } else {
             alert("There was an error")

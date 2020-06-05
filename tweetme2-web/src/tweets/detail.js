@@ -1,8 +1,13 @@
 import React, {useState} from 'react'
 import {ActionBtn} from './buttons'
 
+import {
+  UserDisplay,
+  UserPicture,
+} from '../profiles/index'
 
 // NOTE this file will get data from list.js
+
 
 // this function will help to show the parent tweet
 export function ParentTweet(props) {
@@ -48,23 +53,19 @@ export function ParentTweet(props) {
         <div className={className}>
           {isRetweet && 
             <div className='mb-2'>
-              <span className='small text-muted'>Retweet via @{retweeter.username}</span>
+              <span className='small text-muted'>Retweet via <UserDisplay user={retweeter}/></span>
             </div>} {/*if is retweet the we show the span is retweet*/}
         
           <div className='d-flex'>    
             <div className='col-1'>
-              <span className='mx-1 px-3 py-2 rounded-circle bg-dark text-white'>
-                {tweet.user.username[0]}
-              </span>
+              <UserPicture user={tweet.user} />
             </div>
 
             <div className='col-11'>
               <div>
               
                 <p>
-                  {tweet.user.first_name}
-                  {tweet.user.last_name}{" "}
-                  @{tweet.user.username}
+                  <UserDisplay includeFullName user={tweet.user}/>  {/* this will help to show the username*/}
                 </p>
                 <p>{tweet.content}</p>
                 

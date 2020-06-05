@@ -56,7 +56,7 @@
         var tweeme2EL = document.getElementById("tweetme-2")
         tweeme2EL.className = 'd-none'                        // here we set all the tweets to dispare
         var tweetId = tweetId     // because of classname tweetme-2-detail then it will be fetched by index.js file and then we will set the data
-        var tweetEl = "<div class='tweetme-2-detail' data-tweet-id="+ tweetId +" data-class-name='col-6 mx-auto'></div>" // so here we set the id
+        var tweetEl = "<div class='tweetme-2-detail' data-tweet-id="+ tweetId +" data-class-name='col-12 mx-auto py-5'></div>" // so here we set the id
         var mainContainer = document.getElementById("tweet-container")  // then get the upper div by it's id
         mainContainer.innerHTML += tweetEl        // then replace its innerhtml with our <div> which contains id tweet-2-detail  
       }
