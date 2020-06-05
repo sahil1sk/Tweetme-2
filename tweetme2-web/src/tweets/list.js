@@ -10,7 +10,8 @@ import {Tweet} from './detail'
 export function TweetsList(props) {
     const [tweetsInit, setTweetsInit] = useState([])
     const [tweets, setTweets] = useState([])
-    const [tweetsDidSet, setTweetsDisSet] = useState(false)
+    const [tweetsDidSet, setTweetsDisSet] = useState(false)  // this state we make taht so that our code will run only onetime
+    const [nextUrl, setNextUrl] = useState(null)    // this is for handling nexturl which is send by rest pagination
 
     useEffect(() => {
       const final = [...props.newTweets].concat(tweetsInit) //... will hep to copy the state means making as that props so here we concating the new tweet which we get through props
@@ -20,12 +21,14 @@ export function TweetsList(props) {
     },[props.newTweets, tweets,tweetsInit]) // so we are passing this as dependency because we need that 
 
     // useEffect will help to implement all the function which we are able to implement in the class component    
-    // here using the given useEffect we load all the data
+    // here using the given useEffect we load all the data this useEffect is component did mount
     useEffect(() => {
       if (tweetsDidSet === false){                  // we make this if after getting the data it the given function will not call again
         const handleTweetListLookup = (response, status) => {
-          if (status === 200){
-            setTweetsInit(response)       //here we are setting the data in the setTweets
+          if (status === 200){  // Because of rest pagination our list is now bind in results
+            setNextUrl(response.next)
+            setTweetsInit(response.results)       //here we are setting the data in the setTweets
+            //setTweets(response.status)
             setTweetsDisSet(true)
           } else {
             alert("There was an error")
@@ -50,15 +53,41 @@ export function TweetsList(props) {
         
     }
 
+    // this function will take place when the nextUrl button is clicked
+    const handleLoadNext = (event) => {
+      // event.preventDefualt()
+      if(nextUrl !== null){     // nextUrl is our state element so we get this from anywhere
+        // so here in this we handle callback method
+        const handleLoadNextResponse = (response, status) => {
+          if (status === 200){  // Because of rest pagination our list is now bind in results
+            setNextUrl(response.next)
+            const newTweets = [...tweets].concat(response.results)  // so here we concat the new tweets with older tweets not actually replacing them
+            setTweetsInit(newTweets)       //here we are setting the data in the setTweets
+            setTweets(newTweets)          // if you don't want to load older tweet then do setTweetsInit(reponse.results) setTweets(response.result)
+          } else {
+            alert("There was an error")
+          }
+        }
+
+        apiTweetList(props.username, handleLoadNextResponse, nextUrl)  // so here we send username callback method and nexturl
+      
+      }
+    }
+
     // we are getting the data in tweets through setTweets
-    return tweets.map((item, index)=>{
-      return( 
-        <Tweet 
-        tweet={item} 
-        didRetweet={handleDidRetweet} 
-        className='my-5 py-5 border bg-white text-dark' 
-        key={`${index}-{item.id}`} 
-        /> // here we are calling the tweet function 
-      );    
-    })
+    return(
+      <> 
+        {tweets.map((item, index)=>{      
+          return( 
+            <Tweet 
+            tweet={item} 
+            didRetweet={handleDidRetweet} 
+            className='my-5 py-5 border bg-white text-dark' 
+            key={`${index}-{item.id}`} 
+            /> // here we are calling the tweet function 
+          );    
+        })}
+        {nextUrl !== null && <button onClick={handleLoadNext} className='btn btn-outline-primary'>Load next</button>}
+      </>      
+    );
 }

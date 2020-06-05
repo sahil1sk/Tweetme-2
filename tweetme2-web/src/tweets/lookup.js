@@ -17,10 +17,15 @@ export function apiTweetDetail(tweetId, callback){
 }
 
 // this function is used to load the api
-export function apiTweetList(username, callback) {
+export function apiTweetList(username, callback, nextUrl) { // nextUrl is basically for pagination
   let endpoint = "/tweets/"
   if (username){
     endpoint = `/tweets/?username=${username}`              // to get data match with that username we use this way
   }
+  // here if we have next url then we pass end point as next url
+  if(nextUrl !== null && nextUrl !== undefined){
+    endpoint = nextUrl.replace("http://127.0.0.1:8000/api","")  // so here we are replacing the "http://127.0.0.1:8000/api this part becuase that part we handle in backend componenet
+  }
+
   backendLookup("GET", endpoint, callback)
 }
