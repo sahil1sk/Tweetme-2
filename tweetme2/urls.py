@@ -26,13 +26,15 @@ from accounts.views import (
 )
 
 from tweets.views import( 
+    home_view,
     tweets_list_view,
     tweets_detail_view,
 )
 
 urlpatterns = [
+    path('', home_view),                            # this will show our tweet and to whom we follow tweets if we authenticated otherwise it will show global tweet
     path('admin/', admin.site.urls),
-    path('', tweets_list_view),                             # this is for showing all the tweets             
+    path('global/', tweets_list_view),              # this is for showing all the tweets             
     path('<int:tweet_id>', tweets_detail_view),             # this is for showing the detail of the tweet 
     re_path(r'profiles?/', include('profiles.urls')),          # prfiles? s is optional 
     path('api/tweets/', include('tweets.api.urls')),

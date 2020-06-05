@@ -20,7 +20,7 @@ export function ParentTweet(props) {
   
 
   // this function will call in map for formatting the tweets
-  export function Tweet(props) {                        // retweeter is for who is actully doing retweet for itself
+  export function Tweet(props) {  // did retweet is handle in list.js or feed.js     // retweeter is for who is actully doing retweet for itself
       const {tweet, didRetweet, hideActions, isRetweet, retweeter} = props   //const {tweet} = props === tweet = props.tweet
       const [actionTweet, setActionTweet] = useState(props.tweet ? props.tweet : null)
       let className = props.className ? props.className : "col-10 mx-auto-md-6"
@@ -79,7 +79,7 @@ export function ParentTweet(props) {
                     <ActionBtn tweet={actionTweet} didPerformAction={handlePerformAction} action={{type:"like", display:"Likes"}}/>            {/*Calling for making the button we are calling function ActionButton*/}
                     <ActionBtn tweet={actionTweet} didPerformAction={handlePerformAction} action={{type:"unlike", display:"Unlike"}}/>
                     <ActionBtn tweet={actionTweet} didPerformAction={handlePerformAction} action={{type:"retweet", display:"Retweet"}}/>
-                    </>
+                    </>         // In tweet we send the like or unlike   {/* didPerform will check is there any action send by buttons*/}
                 }
 
                 {/*Because we want to show the detail of both the parent and child tweet that's why we make detail button it outside div*/}

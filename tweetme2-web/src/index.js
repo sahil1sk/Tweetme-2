@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import {TweetsComponent, TweetDetailComponent} from './tweets/index'
+import {FeedComponent, TweetsComponent, TweetDetailComponent} from './tweets/index'
 import * as serviceWorker from './serviceWorker';
 
 
@@ -26,6 +26,18 @@ if (tweetsEl) {
   const MyComponent = e(TweetsComponent, tweetsEl.dataset); // so this is the also way to give all the data  to the component
   ReactDOM.render(MyComponent, tweetsEl);
 }
+
+// this is for feed
+
+const tweetFeedEl = document.getElementById("tweetme-2-feed");
+if (tweetFeedEl) {
+  // so we fetch the dataset that is written in index.html file div
+  console.log(tweetFeedEl.dataset);
+  const MyComponent = e(FeedComponent, tweetFeedEl.dataset); // so this is the also way to give all the data  to the component
+  ReactDOM.render(MyComponent, tweetFeedEl);
+}
+
+
 
 // this will get all of the elements of the div which class name is tweetme-2-detail
 const tweetDetailElements = document.querySelectorAll(".tweetme-2-detail") 

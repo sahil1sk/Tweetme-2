@@ -29,3 +29,17 @@ export function apiTweetList(username, callback, nextUrl) { // nextUrl is basica
 
   backendLookup("GET", endpoint, callback)
 }
+
+// this function is used to get all the tweets from the backend to whom we gollow
+export function apiTweetFeed(callback, nextUrl) { // nextUrl is basically for pagination
+  let endpoint = "/tweets/feed/"
+  
+  // here if we have next url then we pass end point as next url
+  if(nextUrl !== null && nextUrl !== undefined){
+    endpoint = nextUrl.replace("http://127.0.0.1:8000/api","")  // so here we are replacing the "http://127.0.0.1:8000/api this part becuase that part we handle in backend componenet
+  }
+
+  backendLookup("GET", endpoint, callback)
+}
+
+

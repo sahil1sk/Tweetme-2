@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { apiTweetList } from './lookup' // apiTweetList will help to fetch all the tweets
+import { apiTweetFeed } from './lookup' // apiTweetList will help to fetch all the tweets
 import {Tweet} from './detail'
 
 // NOTE this will get data from component.js
@@ -7,7 +7,7 @@ import {Tweet} from './detail'
 // in this function all the things will implement this will load the data
 // and then calll
 // this will get data from tweet.component
-export function TweetsList(props) {
+export function FeedList(props) {
     const [tweetsInit, setTweetsInit] = useState([])    // IN this we get data through inital useEffect
     const [tweets, setTweets] = useState([])            // in this we get data through 2 useeffect
     const [tweetsDidSet, setTweetsDisSet] = useState(false)  // this state we make taht so that our code will run only onetime
@@ -36,7 +36,7 @@ export function TweetsList(props) {
             alert("There was an error")
           }
         }             // we are passing  the username now time for checking
-        apiTweetList(props.username, handleTweetListLookup)    // loadTweets import this will provide data
+        apiTweetFeed(handleTweetListLookup)    // loadTweets import this will provide data
       }
     }, [tweetsDidSet,setTweetsDisSet, props.username])  // we have to passing the props.username as dependecncy because we have to use this 
 
@@ -71,7 +71,7 @@ export function TweetsList(props) {
           }
         }
 
-        apiTweetList(props.username, handleLoadNextResponse, nextUrl)  // so here we send username callback method and nexturl
+        apiTweetFeed(handleLoadNextResponse, nextUrl)  // so here we send username callback method and nexturl
       
       }
     }
@@ -89,7 +89,7 @@ export function TweetsList(props) {
             /> // here we are calling the tweet function 
           );    
         })}
-        {nextUrl !==null  && <button onClick={handleLoadNext} className='btn btn-outline-primary'>Load next</button>}
+        {nextUrl!== null && <button onClick={handleLoadNext} className='btn btn-outline-primary'>Load next</button>}
       </>      
     );
 }

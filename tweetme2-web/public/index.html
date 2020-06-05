@@ -33,8 +33,10 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <!-- data- will help to grab the data by index.js file-->
-    <div id='tweet-container'></div>
-    <div id="tweetme-2" data-username="sahil" data-can-tweet="false"></div>
+    <!-- d-none will normally remove the div -->
+    <div  id="tweetme-2-feed"></div>
+    <div class="d-none" id='tweet-container'></div>  <!--this will show the tweets using its id basically show the detail-->
+    <div class="d-none" id="tweetme-2" data-username="sahil" data-can-tweet="false"></div>     <!--this will show the tweets to we follow-->
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

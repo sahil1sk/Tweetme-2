@@ -22,7 +22,7 @@ class TweetQuerySet(models.QuerySet):
         return self.filter(user__username__iexact = username)
 
     def feed(self, user):
-        profiles = user.following.exists()     # getting the all users where our user objects is exists
+        profiles = user.following.exists()     # where our user exists all that users will provided
         followed_users_id = []
         if profiles:                  # so here we are getting the id of that user to whom we follow in efficient way                  
             followed_users_id = user.following.values_list("user__id", flat=True)     

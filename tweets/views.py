@@ -11,7 +11,7 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 # here we normally show the data
 def home_view(request, *args, **kwargs):
     #return HttpResponse("Hello World")
-    return render(request, "pages/home.html", context={}, status=200)
+    return render(request, "pages/feed.html", context={}, status=200)
 
 
 

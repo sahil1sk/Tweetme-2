@@ -36,7 +36,7 @@ def tweet_create_view(request, *args, **kwargs):
             return Response(serializer.data, status=201)        # we are using Response in serializer because it will send data in Json form
     return Response({}, status = 400)
 
-# this function we make to get all the tweets using serializer this is called internally by javascript
+# this function will help to show all the tweets and also provide the tweets if we send the username
 @api_view(['GET'])
 def tweet_list_view(request, *args, **kwargs):
     qs = Tweet.objects.all()

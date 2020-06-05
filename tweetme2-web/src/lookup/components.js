@@ -39,7 +39,9 @@ export function backendLookup(method, endpoint, callback, data) {
     if(xhr.status === 403 && xhr.response){       // if the status is 403 then it true and we check inner if
       const detail = xhr.response.detail          // so here we take the detail of the response
       if(detail === "Authentication credentials were not provided."){  // so in this if we check the detail is equal to authentication not provided then redirect the user to login page
-        window.location.href = "/login?showLoginRequired=true"              // we also add show login required to true
+        if(window.location.href.indexOf("login") === -1){ // this if means if there is no login at pathname then show login if there is login then not show again and again
+          window.location.href = "/login?showLoginRequired=true"
+        }              // we also add show login required to true
       }
     }
     callback(xhr.response, xhr.status)
