@@ -51,8 +51,8 @@ def get_paginated_queryset_response(qs, request):
     paginator.page_size = 10             # here we set the page size   
         
     paginated_qs = paginator.paginate_queryset(qs, request) # so here we set the data which we get
-    
-    serializer = TweetSerializer(paginated_qs, many=True)       # here we serialize the data
+                                                           # so here we just passing the context so to check the is_following part that we made in profile serializer                               
+    serializer = TweetSerializer(paginated_qs, many=True , context={"request":request})       # here we serialize the data
     return paginator.get_paginated_response(serializer.data)    # so here we return paginator response so that we will get another pages link
 
 
@@ -61,7 +61,7 @@ def get_paginated_queryset_response(qs, request):
 @permission_classes([IsAuthenticated])
 def tweet_feed_view(request, *args, **kwargs):
     user = request.user                  # this is normally getting user   
-    qs = Tweet.objects.feed(user)                   # so here we call the method from tweets model
+    qs = Tweet.objects.feed(user)                   # so here we call the method from tweets model to get the tweets of the user to whom we follow and also including our tweets
     return get_paginated_queryset_response(qs, request)
     # return Response( serializer.data, status=200)
 

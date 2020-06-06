@@ -7,6 +7,7 @@ class PublicProfileSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField(read_only=True)
     follower_count  = serializers.SerializerMethodField(read_only=True)
     following_count = serializers.SerializerMethodField(read_only=True)
+    is_following = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Profile
@@ -18,9 +19,20 @@ class PublicProfileSerializer(serializers.ModelSerializer):
             "location",
             "follower_count",
             "following_count",
+            "is_following",
             "username",
         ]
  
+    # this function will help to check the user who request the data follow this profile or not 
+    def get_is_following(self, obj):
+        is_following = False
+        context = self.context        # this context we pass throgh profile/api/views
+        request = context.get("request")
+        if request:
+            user = request.user
+            is_following = user in obj.followers.all()  # so here we get the user who fetch the data follow to profile or not
+        return is_following
+
     def get_first_name(self, obj):
         return obj.user.first_name
     

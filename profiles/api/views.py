@@ -11,17 +11,21 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from ..models import Profile
+from ..serializers import PublicProfileSerializer
 
 User = get_user_model()
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def user_profile_detail_view(request, username, *args, **kwargs):
-#     current_user = request.user
-#     to_follow_user = ??
-#     return Response({}, status=200)
-
+# this function will return the api which will give the detail related to the user which we will give
+@api_view(['GET'])
+def profile_detail_api_view(request, username, *args, **kwargs):
+    qs = Profile.objects.filter(user__username=username)
+    if not qs.exists():
+        return Response({"detail":"User not found"}, status=404)
+    profile_obj = qs.first()
+                                 # so here we also able to pass context in the serializer    we are also able to pass instance as well   
+    data = PublicProfileSerializer(instance=profile_obj, context={"request":request})    # so here we passing instance to get the data or to show data we are also able to do without adding instance
+    return Response(data.data, status=200)
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])

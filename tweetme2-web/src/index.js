@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import {ProfileBadgeComponent} from './profiles/index'
 import {FeedComponent, TweetsComponent, TweetDetailComponent} from './tweets/index'
 import * as serviceWorker from './serviceWorker';
 
@@ -22,7 +23,6 @@ const e = React.createElement // so here we create the element
 const tweetsEl = document.getElementById("tweetme-2");
 if (tweetsEl) {
   // so we fetch the dataset that is written in index.html file div
-  console.log(tweetsEl.dataset);
   const MyComponent = e(TweetsComponent, tweetsEl.dataset); // so this is the also way to give all the data  to the component
   ReactDOM.render(MyComponent, tweetsEl);
 }
@@ -32,10 +32,20 @@ if (tweetsEl) {
 const tweetFeedEl = document.getElementById("tweetme-2-feed");
 if (tweetFeedEl) {
   // so we fetch the dataset that is written in index.html file div
-  console.log(tweetFeedEl.dataset);
   const MyComponent = e(FeedComponent, tweetFeedEl.dataset); // so this is the also way to give all the data  to the component
   ReactDOM.render(MyComponent, tweetFeedEl);
 }
+
+
+// this is for showing the profile
+const userProfileBadgeElements = document.querySelectorAll(".tweetme-2-profile-badge") 
+
+// forEach is basically a loop means if there is more than one container 
+// user to render data of all container one by none
+userProfileBadgeElements.forEach(container => {
+  const MyComponent = e(ProfileBadgeComponent, container.dataset);
+  ReactDOM.render(MyComponent,container);  
+})
 
 
 
