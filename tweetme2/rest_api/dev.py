@@ -7,5 +7,6 @@ User = get_user_model()
 class DevAuthentication(authentication.BasicAuthentication):
     def authenticate(self, request):
         qs = User.objects.all()
-        user = qs.order_by("?").first()      # ? help to select any random user
+        user = qs.first()      # qs.order_by("?").first()  ? help to select any random user
         return (user, None)
+        

@@ -52,5 +52,6 @@ def user_follow_view(request, username, *args, **kwargs):
     else:
         pass
     
-    current_followers_qs = profile.followers.all()                                  # here we also return the count of the other profile while get method
-    return Response({"count": current_followers_qs.count()}, status=200)
+    # so here we send the new data through serializer
+    data = PublicProfileSerializer(instance=profile, context={"request":request})                            # here we also return the count of the other profile while get method
+    return Response(data.data, status=200)
