@@ -3,6 +3,7 @@
 import React, {useState, useEffect} from 'react';
 import {apiProfileDetail, apiProfileFollowToggle} from './lookup';
 import {UserDisplay, UserPicture} from './components';
+import {DisplayCount} from './utils';
 
 // this function will call all the function which will help to show the user profile
 // Also help to show the follow button
@@ -22,6 +23,10 @@ function ProfileBadge(props) {
   return user ? <div>
                   <UserPicture user={user} hideLink /> 
                   <p><UserDisplay user={user} hideLink includeFullName/></p> {/*this do for display data from UserDisplay*/}
+                  <p><DisplayCount>{user.follower_count}</DisplayCount>{user.follower_count === 1 ? ' follower' : ' followers'}</p> {/*Here we show the followers and following count*/}
+                  <p><DisplayCount>{user.following_count}</DisplayCount>{user.following_count === 1 ? ' following' : ' followings'}</p>
+                  <p>{user.location}</p>
+                  <p>{user.bio}</p>
                   <button className='btn btn-outline-primary' onClick={handleFollowToggle}>{currentVerb}</button>
                 </div> 
               : null

@@ -154,9 +154,9 @@ if DEBUG:
     DEFAULT_RENDERER_CLASSES += [
         'rest_framework.renderers.BrowsableAPIRenderer',
     ]
-    DEFAULT_AUTHENTICATION_CLASSES += [                 # here if we are in debug mode we also add our authetiation that if not user then it will take automatically random user
-        'tweetme2.rest_api.dev.DevAuthentication'
-    ]
+  #  DEFAULT_AUTHENTICATION_CLASSES += [                 # here if we are in debug mode we also add our authetiation that if not user then it will take automatically random user
+   #     'tweetme2.rest_api.dev.DevAuthentication'
+    #]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': DEFAULT_AUTHENTICATION_CLASSES,

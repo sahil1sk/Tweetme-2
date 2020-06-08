@@ -6,8 +6,8 @@
 
 {% block content %}
     {% if request.user.is_authenticated %}
-        <div id="tweetme-2-feed"></div>
+        <div id="tweetme-2-feed"></div>             <!--this will show the tweets related to ourl and to whom we follow-->
     {% else %}
-        <div id="tweetme-2"></div>
+        <div id="tweetme-2"></div>                  <!--this will show all the tweets-->
     {% endif %}
 {% endblock content %}
